@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Smooth theme transitions */
+/* html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+} */
+/* Apply transitions to all elements */
+/* 
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+} */
+
+@import "tailwindcss";
+
+/* ✅ Custom dark mode variant for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ✅ Smooth theme transitions */
+@layer base {
+  html {
+    @apply transition-colors duration-300;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html.light {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    @apply transition-colors duration-300;
+  }
+
+  /* Prevent layout shift during theme change */
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+/* ✅ Apply transitions to interactive elements */
+@layer components {
+  * {
+    @apply transition-colors duration-200;
+  }
+
+  /* Disable transitions for immediate feedback elements */
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    @apply transition-all duration-200;
+  }
+}
+
+/* ✅ Custom scrollbar with dark mode support */
+@layer utilities {
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.400') theme('colors.gray.100');
+  }
+
+  .dark * {
+    scrollbar-color: theme('colors.gray.600') theme('colors.gray.800');
+  }
+}
+
+/* ✅ Prevent flash of unstyled content */
+/* html:not(.dark):not(.light) {
+  visibility: hidden;
+}
+
+html.dark,
+html.light {
+  visibility: visible;
+} */
+/* 
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} */
