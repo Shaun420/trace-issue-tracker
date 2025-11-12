@@ -1,19 +1,32 @@
-import { useState, useEffect } from 'react';
-import { 
-  FiMail, FiSlack, FiBell, FiCheckCircle, FiClock, 
-  FiSend, FiFilter, FiRefreshCw, FiMessageSquare,
-  FiAlertCircle, FiInfo, FiX, FiEdit2, FiTrash2,
-  FiUsers, FiCheck, FiChevronDown
-} from 'react-icons/fi';
-import { format, formatDistanceToNow } from 'date-fns';
-import toast from 'react-hot-toast';
-import api from '../api/mockData';
+import { useState, useEffect } from "react";
+import {
+  FiMail,
+  FiSlack,
+  FiBell,
+  FiCheckCircle,
+  FiClock,
+  FiSend,
+  FiFilter,
+  FiRefreshCw,
+  FiMessageSquare,
+  FiAlertCircle,
+  FiInfo,
+  FiX,
+  FiEdit2,
+  FiTrash2,
+  FiUsers,
+  FiCheck,
+  FiChevronDown,
+} from "react-icons/fi";
+import { format, formatDistanceToNow } from "date-fns";
+import toast from "react-hot-toast";
+import api from "../api/mockData";
 
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [selectedNotifications, setSelectedNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, sent, pending, failed
+  const [filter, setFilter] = useState("all"); // all, sent, pending, failed
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [stats, setStats] = useState({
@@ -21,7 +34,7 @@ function Notifications() {
     sent: 0,
     pending: 0,
     failed: 0,
-    openRate: 0
+    openRate: 0,
   });
 
   useEffect(() => {
@@ -32,12 +45,12 @@ function Notifications() {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/notifications/', {
-        params: { status: filter !== 'all' ? filter : undefined }
+      const response = await api.get("/notifications/", {
+        params: { status: filter !== "all" ? filter : undefined },
       });
       setNotifications(response.data);
     } catch (error) {
-      toast.error('Failed to fetch notifications');
+      toast.error("Failed to fetch notifications");
     } finally {
       setLoading(false);
     }
@@ -45,50 +58,50 @@ function Notifications() {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/notifications/stats/');
+      const response = await api.get("/notifications/stats/");
       setStats(response.data);
     } catch (error) {
-      console.error('Failed to fetch stats');
+      console.error("Failed to fetch stats");
     }
   };
 
   const handleResend = async (notificationId) => {
     try {
       await api.post(`/notifications/${notificationId}/resend/`);
-      toast.success('Notification resent successfully');
+      toast.success("Notification resent successfully");
       fetchNotifications();
     } catch (error) {
-      toast.error('Failed to resend notification');
+      toast.error("Failed to resend notification");
     }
   };
 
   const handleBulkResend = async () => {
     if (selectedNotifications.length === 0) {
-      toast.error('Please select notifications to resend');
+      toast.error("Please select notifications to resend");
       return;
     }
 
     try {
-      await api.post('/notifications/bulk_resend/', {
-        notification_ids: selectedNotifications
+      await api.post("/notifications/bulk_resend/", {
+        notification_ids: selectedNotifications,
       });
       toast.success(`${selectedNotifications.length} notifications resent`);
       setSelectedNotifications([]);
       fetchNotifications();
     } catch (error) {
-      toast.error('Failed to resend notifications');
+      toast.error("Failed to resend notifications");
     }
   };
 
   const handleDelete = async (notificationId) => {
-    if (!confirm('Are you sure you want to delete this notification?')) return;
-    
+    if (!confirm("Are you sure you want to delete this notification?")) return;
+
     try {
       await api.delete(`/notifications/${notificationId}/`);
-      toast.success('Notification deleted');
+      toast.success("Notification deleted");
       fetchNotifications();
     } catch (error) {
-      toast.error('Failed to delete notification');
+      toast.error("Failed to delete notification");
     }
   };
 
@@ -96,17 +109,17 @@ function Notifications() {
     if (selectedNotifications.length === notifications.length) {
       setSelectedNotifications([]);
     } else {
-      setSelectedNotifications(notifications.map(n => n.id));
+      setSelectedNotifications(notifications.map((n) => n.id));
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'sent':
+      case "sent":
         return <FiCheckCircle className="text-green-500" />;
-      case 'pending':
+      case "pending":
         return <FiClock className="text-yellow-500" />;
-      case 'failed':
+      case "failed":
         return <FiAlertCircle className="text-red-500" />;
       default:
         return <FiInfo className="text-gray-500" />;
@@ -115,9 +128,9 @@ function Notifications() {
 
   const getChannelIcon = (channel) => {
     switch (channel) {
-      case 'email':
+      case "email":
         return <FiMail className="text-blue-500" />;
-      case 'slack':
+      case "slack":
         return <FiSlack className="text-purple-500" />;
       default:
         return <FiBell className="text-gray-500" />;
@@ -129,8 +142,12 @@ function Notifications() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Notifications</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Manage and track user notifications</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Notifications
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Manage and track user notifications
+          </p>
         </div>
         <button
           onClick={() => setShowComposeModal(true)}
@@ -191,25 +208,35 @@ function Notifications() {
               <option value="failed">Failed</option>
             </select>
 
-            {selectedNotifications.length > 0 && (
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600">
-                  {selectedNotifications.length} selected
-                </span>
-                <button
-                  onClick={handleBulkResend}
-                  className="flex items-center space-x-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200"
-                >
-                  <FiRefreshCw size={14} />
-                  <span className="text-sm">Resend</span>
-                </button>
-              </div>
-            )}
+			{selectedNotifications.length > 0 && (
+			<div className="flex items-center gap-3">
+				<span className="text-sm text-gray-600 dark:text-gray-300">
+				{selectedNotifications.length} selected
+				</span>
+				<button
+				onClick={handleBulkResend}
+				type="button"
+				className="
+					inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-semibold
+					shadow-sm transition-colors
+					bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800
+					dark:bg-purple-500 dark:hover:bg-purple-400 dark:active:bg-purple-500
+					focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60
+					disabled:opacity-50 disabled:pointer-events-none
+				"
+				disabled={selectedNotifications.length === 0}
+				title="Resend selected"
+				>
+				<FiRefreshCw size={14} />
+				<span>Resend</span>
+				</button>
+			</div>
+			)}
           </div>
 
           <button
             onClick={fetchNotifications}
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg dark:text-inherit dark:hover:text-gray-800"
           >
             <FiRefreshCw />
           </button>
@@ -231,7 +258,10 @@ function Notifications() {
                     <th className="px-6 py-3 text-left">
                       <input
                         type="checkbox"
-                        checked={selectedNotifications.length === notifications.length && notifications.length > 0}
+                        checked={
+                          selectedNotifications.length ===
+                            notifications.length && notifications.length > 0
+                        }
                         onChange={handleSelectAll}
                         className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                       />
@@ -264,11 +294,13 @@ function Notifications() {
                     <NotificationRow
                       key={notification.id}
                       notification={notification}
-                      isSelected={selectedNotifications.includes(notification.id)}
+                      isSelected={selectedNotifications.includes(
+                        notification.id
+                      )}
                       onSelect={() => {
-                        setSelectedNotifications(prev =>
+                        setSelectedNotifications((prev) =>
                           prev.includes(notification.id)
-                            ? prev.filter(id => id !== notification.id)
+                            ? prev.filter((id) => id !== notification.id)
                             : [...prev, notification.id]
                         );
                       }}
@@ -308,11 +340,11 @@ function Notifications() {
 // Stats Card Component
 function StatsCard({ icon: Icon, label, value, color }) {
   const colorClasses = {
-    purple: 'bg-purple-50 text-purple-600',
-    green: 'bg-green-50 text-green-600',
-    yellow: 'bg-yellow-50 text-yellow-600',
-    red: 'bg-red-50 text-red-600',
-    blue: 'bg-blue-50 text-blue-600',
+    purple: "bg-purple-50 text-purple-600",
+    green: "bg-green-50 text-green-600",
+    yellow: "bg-yellow-50 text-yellow-600",
+    red: "bg-red-50 text-red-600",
+    blue: "bg-blue-50 text-blue-600",
   };
 
   return (
@@ -322,21 +354,23 @@ function StatsCard({ icon: Icon, label, value, color }) {
           <Icon size={20} />
         </div>
       </div>
-      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
+      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        {value}
+      </p>
       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{label}</p>
     </div>
   );
 }
 
 // Notification Row Component
-function NotificationRow({ 
-  notification, 
-  isSelected, 
-  onSelect, 
-  onResend, 
+function NotificationRow({
+  notification,
+  isSelected,
+  onSelect,
+  onResend,
   onDelete,
   getStatusIcon,
-  getChannelIcon 
+  getChannelIcon,
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -359,16 +393,20 @@ function NotificationRow({
         </td>
         <td className="px-6 py-4">
           <div className="flex items-center space-x-2">
-            {getChannelIcon(notification.channel || 'email')}
-            <span className="text-sm capitalize">{notification.channel || 'email'}</span>
+            {getChannelIcon(notification.channel || "email")}
+            <span className="text-sm capitalize">
+              {notification.channel || "email"}
+            </span>
           </div>
         </td>
         <td className="px-6 py-4">
-          <p className="text-sm text-gray-900 dark:text-gray-100">{notification.recipient_email}</p>
+          <p className="text-sm text-gray-900 dark:text-gray-100">
+            {notification.recipient_email}
+          </p>
         </td>
         <td className="px-6 py-4">
           <p className="text-sm text-gray-900 dark:text-inherit">
-            {notification.issue?.title || 'General Update'}
+            {notification.issue?.title || "General Update"}
           </p>
         </td>
         <td className="px-6 py-4 max-w-xs">
@@ -376,22 +414,26 @@ function NotificationRow({
             onClick={() => setExpanded(!expanded)}
             className="text-sm text-gray-700 hover:text-gray-900 dark:text-inherit text-left"
           >
-            {expanded ? notification.message : (
+            {expanded ? (
+              notification.message
+            ) : (
               <span className="line-clamp-2">{notification.message}</span>
             )}
           </button>
         </td>
         <td className="px-6 py-4">
-          <p className="text-sm text-gray-600">
-            {formatDistanceToNow(new Date(notification.sent_at), { addSuffix: true })}
+          <p className="text-sm text-gray-600 dark:text-inherit">
+            {formatDistanceToNow(new Date(notification.sent_at), {
+              addSuffix: true,
+            })}
           </p>
         </td>
         <td className="px-6 py-4">
           <div className="flex items-center space-x-2">
-            {notification.status === 'failed' && (
+            {notification.status === "failed" && (
               <button
                 onClick={() => onResend(notification.id)}
-                className="text-gray-600 hover:text-purple-600"
+                className="text-gray-600 hover:text-purple-600 dark:text-inherit"
                 title="Resend"
               >
                 <FiRefreshCw size={16} />
@@ -399,7 +441,7 @@ function NotificationRow({
             )}
             <button
               onClick={() => onDelete(notification.id)}
-              className="text-gray-600 hover:text-red-600"
+              className="text-gray-600 dark:text-inherit hover:text-red-600"
               title="Delete"
             >
               <FiTrash2 size={16} />
@@ -430,12 +472,12 @@ function NotificationRow({
 // Compose Notification Modal
 function ComposeNotificationModal({ onClose, onSuccess }) {
   const [formData, setFormData] = useState({
-    recipients: '',
-    subject: '',
-    message: '',
-    channel: 'email',
+    recipients: "",
+    subject: "",
+    message: "",
+    channel: "email",
     issueId: null,
-    sendToAllAffected: false
+    sendToAllAffected: false,
   });
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -446,10 +488,10 @@ function ComposeNotificationModal({ onClose, onSuccess }) {
 
   const fetchIssues = async () => {
     try {
-      const response = await api.get('/issues/');
+      const response = await api.get("/issues/");
       setIssues(response.data);
     } catch (error) {
-      console.error('Failed to fetch issues');
+      console.error("Failed to fetch issues");
     }
   };
 
@@ -459,73 +501,81 @@ function ComposeNotificationModal({ onClose, onSuccess }) {
 
     try {
       if (formData.sendToAllAffected && formData.issueId) {
-        // Send to all affected users
-        await api.post('/notifications/send_to_affected/', {
+        await api.post("/notifications/send_to_affected/", {
           issue_id: formData.issueId,
           subject: formData.subject,
           message: formData.message,
-          channel: formData.channel
+          channel: formData.channel,
         });
       } else {
-        // Send to specific recipients
-        const recipientList = formData.recipients.split(',').map(email => email.trim());
-        await api.post('/notifications/send/', {
+        const recipientList = formData.recipients
+          .split(",")
+          .map((email) => email.trim())
+          .filter(Boolean);
+        await api.post("/notifications/send/", {
           recipients: recipientList,
           subject: formData.subject,
           message: formData.message,
           channel: formData.channel,
-          issue_id: formData.issueId
+          issue_id: formData.issueId,
         });
       }
-      
-      toast.success('Notification sent successfully');
+
+      toast.success("Notification sent successfully");
       onSuccess();
     } catch (error) {
-      toast.error('Failed to send notification');
+      toast.error("Failed to send notification");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-colors">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Compose Notification</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Compose Notification
+            </h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60"
+              aria-label="Close"
             >
-              <FiX size={20} />
+              <FiX size={20} className="text-gray-700 dark:text-gray-300" />
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Channel Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Channel
               </label>
-              <div className="flex space-x-4">
-                <label className="flex items-center">
+              <div className="flex gap-4">
+                <label className="flex items-center text-gray-800 dark:text-gray-200">
                   <input
                     type="radio"
                     value="email"
-                    checked={formData.channel === 'email'}
-                    onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
-                    className="mr-2"
+                    checked={formData.channel === "email"}
+                    onChange={(e) =>
+                      setFormData({ ...formData, channel: e.target.value })
+                    }
+                    className="mr-2 accent-purple-600 dark:accent-purple-500"
                   />
                   <FiMail className="mr-1" />
                   Email
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center text-gray-800 dark:text-gray-200">
                   <input
                     type="radio"
                     value="slack"
-                    checked={formData.channel === 'slack'}
-                    onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
-                    className="mr-2"
+                    checked={formData.channel === "slack"}
+                    onChange={(e) =>
+                      setFormData({ ...formData, channel: e.target.value })
+                    }
+                    className="mr-2 accent-purple-600 dark:accent-purple-500"
                   />
                   <FiSlack className="mr-1" />
                   Slack
@@ -535,16 +585,21 @@ function ComposeNotificationModal({ onClose, onSuccess }) {
 
             {/* Issue Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Related Issue (Optional)
               </label>
               <select
-                value={formData.issueId || ''}
-                onChange={(e) => setFormData({ ...formData, issueId: e.target.value || null })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={formData.issueId || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    issueId: e.target.value || null,
+                  })
+                }
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="">None</option>
-                {issues.map(issue => (
+                {issues.map((issue) => (
                   <option key={issue.id} value={issue.id}>
                     {issue.title} ({issue.feedback_count} users)
                   </option>
@@ -559,10 +614,18 @@ function ComposeNotificationModal({ onClose, onSuccess }) {
                   type="checkbox"
                   id="sendToAllAffected"
                   checked={formData.sendToAllAffected}
-                  onChange={(e) => setFormData({ ...formData, sendToAllAffected: e.target.checked })}
-                  className="mr-2"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      sendToAllAffected: e.target.checked,
+                    })
+                  }
+                  className="mr-2 accent-purple-600 dark:accent-purple-500"
                 />
-                <label htmlFor="sendToAllAffected" className="text-sm text-gray-700">
+                <label
+                  htmlFor="sendToAllAffected"
+                  className="text-sm text-gray-700 dark:text-gray-300"
+                >
                   Send to all users who reported this issue
                 </label>
               </div>
@@ -571,13 +634,15 @@ function ComposeNotificationModal({ onClose, onSuccess }) {
             {/* Recipients */}
             {!formData.sendToAllAffected && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Recipients (comma-separated emails)
                 </label>
                 <textarea
                   value={formData.recipients}
-                  onChange={(e) => setFormData({ ...formData, recipients: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  onChange={(e) =>
+                    setFormData({ ...formData, recipients: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   rows="2"
                   placeholder="user1@example.com, user2@example.com"
                   required={!formData.sendToAllAffected}
@@ -587,58 +652,73 @@ function ComposeNotificationModal({ onClose, onSuccess }) {
 
             {/* Subject */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Subject
               </label>
               <input
                 type="text"
                 value={formData.subject}
-                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, subject: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 required
               />
             </div>
 
             {/* Message */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Message
               </label>
               <textarea
                 value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                onChange={(e) =>
+                  setFormData({ ...formData, message: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 rows="6"
                 required
               />
             </div>
 
             {/* Message Preview */}
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
-              <div className="bg-white p-3 rounded border border-gray-200">
-                <p className="font-semibold text-sm mb-1">{formData.subject || 'Subject Line'}</p>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                  {formData.message || 'Your message will appear here...'}
+            <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Preview:
+              </p>
+              <div className="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 p-3">
+                <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-gray-100">
+                  {formData.subject || "Subject Line"}
+                </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                  {formData.message || "Your message will appear here..."}
                 </p>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end space-x-3 pt-4">
+            <div className="flex justify-end gap-3 pt-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+                className="
+                  inline-flex items-center justify-center gap-2
+                  px-4 py-2 rounded-lg
+                  bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800
+                  dark:bg-purple-500 dark:hover:bg-purple-400 dark:active:bg-purple-500
+                  disabled:opacity-50 disabled:pointer-events-none
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60
+                "
               >
-                {loading ? 'Sending...' : 'Send Notification'}
+                {loading ? "Sending..." : "Send Notification"}
               </button>
             </div>
           </form>

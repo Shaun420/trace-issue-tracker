@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     'issues',
     'notifications',
     'users',
-    'rest_framework.authtoken',
+	'rest_framework',
     'rest_framework_simplejwt',
     'allauth',
     'allauth.account',
+	'django_filters'
 ]
 
 REST_FRAMEWORK = {
@@ -74,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+	'allauth.account.middleware.AccountMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [

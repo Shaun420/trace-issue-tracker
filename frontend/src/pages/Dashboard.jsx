@@ -131,7 +131,7 @@ function Dashboard() {
               <div className={`p-3 bg-${stat.color}-50 rounded-lg`}>
                 <stat.icon className={`text-${stat.color}-600`} size={24} />
               </div>
-              <span className={`text-xs font-semibold ${
+              <span className={`text-sm font-semibold ${
                 stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'
               }`}>
                 {stat.change}

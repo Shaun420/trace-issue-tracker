@@ -145,38 +145,72 @@ function IssueDetail() {
             <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{issue.description}</p>
           </div>
 
-          {/* Linked Feedback */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">
-                Linked Feedback ({issue.linked_feedback?.length || 0})
-              </h2>
-              <button className="text-purple-600 hover:text-purple-700 text-sm font-medium">
-                Link More
-              </button>
-            </div>
-            
-            {issue.linked_feedback && issue.linked_feedback.length > 0 ? (
-              <div className="space-y-3">
-                {issue.linked_feedback.map((feedback) => (
-                  <div key={feedback.id} className="p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-start justify-between mb-2">
-                      <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
-                        {feedback.source}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {format(new Date(feedback.created_at), 'MMM dd, HH:mm')}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">{feedback.content}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">From: {feedback.user_email}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No feedback linked to this issue yet.</p>
-            )}
-          </div>
+		{/* Linked Feedback */}
+		<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors">
+		<div className="flex items-center justify-between mb-4">
+			<h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+			Linked Feedback ({issue.linked_feedback?.length || 0})
+			</h2>
+			<button
+			className="
+				inline-flex items-center gap-1 text-sm font-medium
+				text-purple-600 hover:text-purple-700
+				dark:text-purple-400 dark:hover:text-purple-300
+				rounded-md px-2 py-1 -mx-2
+				focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60
+				focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900
+				transition-colors
+			"
+			onClick={() => {
+				// open link modal / navigate to selector
+			}}
+			>
+			Link More
+			</button>
+		</div>
+
+		{issue.linked_feedback && issue.linked_feedback.length > 0 ? (
+			<div className="space-y-3">
+			{issue.linked_feedback.map((feedback) => (
+				<div
+				key={feedback.id}
+				className="
+					p-4 rounded-lg
+					bg-gray-50 dark:bg-gray-900/40
+					border border-gray-200 dark:border-gray-700
+					transition-colors
+				"
+				>
+				<div className="flex items-start justify-between mb-2">
+					<span
+					className="
+						px-2 py-1 rounded text-xs font-semibold
+						bg-purple-100 text-purple-700
+						dark:bg-purple-900/40 dark:text-purple-300
+					"
+					>
+					{feedback.source}
+					</span>
+					<span className="text-xs text-gray-500 dark:text-gray-400">
+					{format(new Date(feedback.created_at), 'MMM dd, HH:mm')}
+					</span>
+				</div>
+
+				<p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+					{feedback.content}
+				</p>
+				<p className="text-xs text-gray-500 dark:text-gray-400">
+					From: {feedback.user_email}
+				</p>
+				</div>
+			))}
+			</div>
+		) : (
+			<p className="text-sm text-gray-500 dark:text-gray-400">
+			No feedback linked to this issue yet.
+			</p>
+		)}
+		</div>
         </div>
 
         {/* Sidebar */}
@@ -213,22 +247,36 @@ function IssueDetail() {
             </div>
           </div>
 
-          {/* Statistics */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold mb-4">Impact</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Affected Users</span>
-                <span className="text-lg font-semibold">{issue.linked_feedback?.length || 0}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Days Open</span>
-                <span className="text-lg font-semibold">
-                  {Math.floor((new Date() - new Date(issue.created_at)) / (1000 * 60 * 60 * 24))}
-                </span>
-              </div>
-            </div>
-          </div>
+			{/* Statistics */}
+			<div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors">
+			<h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+				Impact
+			</h3>
+
+			<div className="space-y-3">
+				<div className="flex items-center justify-between">
+				<span className="text-sm text-gray-600 dark:text-gray-400">Affected Users</span>
+				<span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+					{issue.linked_feedback?.length || 0}
+				</span>
+				</div>
+
+				<div className="flex items-center justify-between">
+				<span className="text-sm text-gray-600 dark:text-gray-400">Days Open</span>
+				<span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+					{issue?.created_at
+					? Math.max(
+						0,
+						Math.floor(
+							(Date.now() - new Date(issue.created_at).getTime()) / 86400000
+						)
+						)
+					: 0}
+				</span>
+				</div>
+			</div>
+			</div>
+
         </div>
       </div>
 
